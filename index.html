@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Salt, Surf & Sharks — Australia's Ocean Edge</title>
+<script src="https://cdn.jsdelivr.net/npm/vega@5.30.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lora:ital,wght@0,600;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  /* palette */
+  --ink:    #07111f;
+  --navy:   #0c1e38;
+  --teal:   #0b7285;
+  --cyan:   #22d3ee;
+  --sand:   #f0e4c8;
+  --sand2:  #bfa07a;
+  --red:    #e63946;
+  --amber:  #f4a261;
+  --gold:   #ffd166;
+  --green:  #2a9d8f;
+  --mint:   #78c8a8;
+  --grey:   #a8a8b3;
+  --muted:  #6b849e;
+  --border: rgba(34,211,238,.12);
+  --card:   rgba(12, 28, 51, 0.78);
+
+  /* type scale */
+  --text-xs:   11px;   /* labels, eyebrows, captions */
+  --text-sm:   12px;   /* legends, sources */
+  --text-base: 15px;   /* body */
+  --text-lg:   22px;   /* pull quotes, standfirsts   */
+  --text-disp: clamp(30px, 4.5vw, 48px); /* section titles */
+
+  /* spacing */
+  --sp-1:  8px;
+  --sp-2:  16px;
+  --sp-3:  24px;
+  --sp-4:  32px;
+  --sp-6:  48px;
+  --sp-8:  64px;
+  --sp-12: 96px;
+
+  --measure: 64ch;  /* max line length for body text */
+}
+
+/*BASE */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  background: var(--ink);
+  color: var(--sand);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  font-size: var(--text-base);
+  line-height: 2;
+}
+
+/* Background glow */
+.amb {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 110% 45% at 80% 5%,  rgba(11,114,133,.22) 0%, transparent 55%),
+    radial-gradient(ellipse 60%  40% at 5%  90%, rgba(34,211,238,.07) 0%, transparent 50%);
+}
+
+/* LAYOUT */
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 28px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Top section */
+.hero {
+  min-height: 100vh;
+  position: relative; overflow: hidden;
+  display: flex; align-items: flex-end;
+  padding-bottom: var(--sp-8);
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #030c18 0%, #071630 50%, #091e3a 100%);
+}
+
+/* waves */
+.wave {
+  position: absolute; bottom: 0;
+  left: -5%; right: -5%;
+  border-radius: 50% 50% 0 0 / 60px 60px 0 0;
+}
+.wave-1 { height: 200px; background: rgba(11,114,133,.16); animation: swell 9s  ease-in-out infinite; }
+.wave-2 { height: 160px; background: rgba(11,114,133,.10); animation: swell 12s ease-in-out infinite reverse; bottom: 8px; }
+.wave-3 { height: 110px; background: var(--ink); }
+@keyframes swell {
+  0%,100% { transform: translateX(0)    scaleY(1);    }
+  50%      { transform: translateX(18px) scaleY(1.05); }
+}
+
+
+/* Label above the title */
+.hero-tag {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: var(--text-xs);
+  letter-spacing: 5px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: var(--sp-2);
+  opacity: 0; animation: up .8s .3s forwards;
+}
+
+/* Display title — maximum visual impact */
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(80px, 12vw, 140px);
+  line-height: .88;
+  letter-spacing: 2px;
+  color: #fff;
+  opacity: 0; animation: up .8s .3s forwards;
+}
+.hero h1 em {
+  color: var(--cyan);
+  font-style: normal;
+}
+
+/* Hero body */
+.hero-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: var(--sp-6);
+  align-items: end;
+  margin-top: var(--sp-4);
+  opacity: 0; animation: up .8s .5s forwards;
+}
+.hero-desc {
+  font-size: var(--text-base);
+  font-weight: 300;
+  color: var(--sand2);
+  line-height: 1.9;
+  max-width: var(--measure);
+}
+
+/* Info grid */
+.hero-kpis {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+}
+.kpi {
+  background: rgba(12,30,56,.7);
+  padding: var(--sp-2) 20px;
+  backdrop-filter: blur(16px);
+}
+/* Top info text */
+.kpi strong {
+  display: block;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--cyan);
+  letter-spacing: 1px;
+}
+.kpi span {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 400;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+@media(max-width:700px) { .hero-layout { grid-template-columns: 1fr; } }
+
+/* SECTIONS */
+section {
+  padding: var(--sp-12) 0;
+  border-top: 1px solid var(--border);
+}
+
+/* Section header block */
+.sec-head {
+  position: relative;
+  margin-bottom: var(--sp-6);
+}
+
+/* Small line above */
+.stripe {
+  width: 30px; height: 3px;
+  background: var(--cyan);
+  margin-bottom: 10px;
+}
+
+/* Section top text, same as hero */
+.sec-tag {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: var(--text-xs);
+  letter-spacing: 5px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+/* Section title */
+.sec-title {
+  font-family: 'Lora', serif;
+  font-weight: 600;
+  font-size: var(--text-disp);
+  line-height: 1.08;
+  color: #fff;
+  margin-bottom: var(--sp-2);
+  letter-spacing: -0.02em;
+}
+.sec-title em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--cyan);
+  letter-spacing: 0;
+}
+
+/* Section paragraph */
+.sec-intro {
+  font-size: var(--text-base);
+  font-weight: 300;
+  max-width: var(--measure);
+  color: var(--sand2);
+  line-height: 1.85;
+}
+/* Inline emphasis in body copy */
+.sec-intro strong { color: var(--sand); font-weight: 500; }
+.sec-intro em     { color: var(--cyan); font-style: italic; }
+
+/* Section number */
+.sec-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 130px;
+  line-height: 1;
+  color: rgba(34,211,238,.05);
+  position: absolute; right: 0; top: -16px;
+  pointer-events: none; user-select: none;
+  letter-spacing: -4px;
+}
+
+/* Border and background for graphs */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: var(--sp-3) 26px;
+  backdrop-filter: blur(16px);
+}
+
+/* Graph title */
+.card-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: var(--text-xs);
+  letter-spacing: 3.5px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: var(--sp-2);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Source citation */
+.card-note {
+  font-size: var(--text-sm);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+/* Annotation Boxes */
+.anno {
+  border-left: 2px solid var(--cyan);
+  background: rgba(34,211,238,.05);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: 0 8px 8px 0;
+  /* Slightly larger than body — acts as a pull quote */
+  font-size: 1200x;
+  font-weight: 300;
+  color: var(--sand);
+  line-height: 1.8;
+  max-width: var(--measure);
+}
+/* Annotation highlights */
+.anno strong {
+  color: var(--cyan);
+  font-weight: 500;
+}
+.anno em {
+  color: var(--amber);
+  font-style: italic;
+}
+
+/*  Stat boxes */
+.hl {
+  background: rgba(34,211,238,.06);
+  border: 1px solid rgba(34,211,238,.18);
+  border-radius: 10px;
+  padding: 20px 22px;
+  text-align: center;
+}
+/* Stat numbers */
+.hl strong {
+  display: block;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 50px;
+  line-height: 1;
+  letter-spacing: 1px;
+  color: var(--cyan);
+}
+/* Label below number */
+.hl span {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 400;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+/* Supporting sentence */
+.hl p {
+  font-size: var(--text-sm);
+  font-weight: 300;
+  color: var(--sand2);
+  margin-top: var(--sp-1);
+  line-height: 1.55;
+}
+
+/* GRID HELPERS */
+.g2 { display: grid; grid-template-columns: 1fr 1fr;       gap: var(--sp-3); }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr;   gap: 18px;        }
+@media(max-width:740px) { .g2, .g3 { grid-template-columns: 1fr; } }
+
+/* LEGEND */
+.legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: var(--sp-2);
+}
+.leg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: .3px;
+}
+.leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.leg-sq  { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+/* 
+   SCROLL REVEAL
+ */
+.rv  { opacity: 0; transform: translateY(28px); transition: opacity .75s ease, transform .75s ease; }
+.rv.in { opacity: 1; transform: translateY(0); }
+.d1 { transition-delay: .1s; }
+.d2 { transition-delay: .2s; }
+.d3 { transition-delay: .3s; }
+
+/* Footer */
+footer {
+  padding: var(--sp-8) 0;
+  border-top: 1px solid var(--border);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-6);
+}
+@media(max-width:600px) { .footer-grid { grid-template-columns: 1fr; } }
+
+footer h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 3px;
+  color: #fff;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+footer p {
+  font-size: var(--text-sm);
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 2;
+  max-width: 48ch;
+}
+footer strong { color: var(--sand); font-weight: 500; }
+footer a      { color: var(--cyan); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+footer code {
+  font-size: 11px;
+  font-family: 'DM Mono', 'Fira Code', monospace;
+  background: rgba(34,211,238,.08);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--cyan);
+}
+
+/* ANIMATIONS */
+@keyframes up {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/*  VEGA EMBED (ensures charts fill their boxes) */
+.vega-embed          { width: 100% !important; }
+.vega-embed > div    { width: 100% !important; }
+</style>
+</head>
+<body>
+<div class="amb"></div>
+
+<!-- Text -->
+<div class="hero">
+  <div class="hero-bg">
+    <div class="wave wave-1"></div>
+    <div class="wave wave-2"></div>
+    <div class="wave wave-3"></div>
+  </div>
+  <div class="wrap hero-inner">
+    <p class="hero-tag">Australia's Ocean - A Data Story (By: Lucas Baking, MAY 2026) </p>
+    <h1>SHARKS <em>&amp;</em><br> SAFETY </h1>
+    <div class="hero-layout">
+      <p class="hero-desc">
+        Australia's beaches are an icon of national identity, but underneath the surf and sunshine,
+        two datasets tell a richer story. This visualisation draws on
+        <strong style="color:var(--sand)">over 200 years of shark incidents</strong> from the Australian
+        Shark Incident Database, and the
+        <strong style="color:var(--sand)">2025 water quality grades</strong> of every monitored
+        NSW swim site from the Beachwatch program. Together they reveal where, when, and how
+        Australia's ocean edge is both beautiful and unforgiving.
+      </p>
+      <div class="hero-kpis">
+        <div class="kpi"><strong>1,196</strong><span>Shark incidents<br>1791–2022</span></div>
+        <div class="kpi"><strong id="kpi-species">25</strong><span>Shark species<br>recorded</span></div>
+        <div class="kpi"><strong>249</strong><span>NSW swim sites<br>monitored 2025</span></div>
+        <div class="kpi"><strong id="kpi-good">—</strong><span>NSW sites graded<br>Good or better</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--  S1: Geography -->
+<section id="s1">
+<div class="wrap">
+  <div class="sec-head rv">
+    <div class="stripe"></div>
+    <p class="sec-tag">Section 01 — Geography</p>
+    <h2 class="sec-title">Where does the<br><em>danger concentrate?</em></h2>
+    <p class="sec-intro">
+      Shark incidents cluster along Australia's eastern seaboard, not because sharks
+      are more prevalent there, but because people are. NSW and Queensland together
+      account for over 67% of all recorded incidents. Hover over any point to explore
+      the year, species, activity, and outcome.
+    </p>
+    <div class="sec-num">01</div>
+  </div>
+
+  <div class="card rv">
+    <p class="card-label">Shark Incident Locations 1791–2022 — Coloured by Outcome</p>
+    <div id="map-aus" class="loading"></div>
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:var(--red)"></div>Fatal</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--amber)"></div>Injured</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--cyan)"></div>Uninjured</div>
+    </div>
+    <p class="card-note">Source: Australian Shark Incident Database (ASID) </p>
+  </div>
+
+  <div class="card rv" style="margin-top:22px;">
+    <p class="card-label">Victoria Zoom — Shark Incidents Along the Victorian Coastline</p>
+    <p style="font-size:13.5px;color:var(--sand2);line-height:1.75;margin-bottom:14px;">
+      Victoria's 70 recorded incidents are concentrated along a narrow coastal strip,
+      from the surf beaches of the Great Ocean Road east to Gippsland. Fatal incidents
+      (larger red dots) are scattered across remote stretches where rescue response times are longest.
+    </p>
+    <div id="map-vic" class="loading"></div>
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:var(--red)"></div>Fatal</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--amber)"></div>Injured</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--cyan)"></div>Uninjured</div>
+    </div>
+    <p class="card-note">Source: Australian Shark Incident Database (ASID)</p>
+  </div>
+
+  <div class="g3" style="margin-top:22px;">
+    <div class="hl rv d1">
+      <strong id="kpi-nsw">—</strong>
+      <span>NSW Incidents</span>
+      <p>Most of any state, dense coastal population and common surf culture.</p>
+    </div>
+    <div class="hl rv d2">
+      <strong id="kpi-wa-rate">—</strong>
+      <span>WA Fatal Rate</span>
+      <p>Highest fatality proportion remote waters, fewer rescue resources.</p>
+    </div>
+    <div class="hl rv d3">
+      <strong id="kpi-unprov">—</strong>
+      <span>Unprovoked</span>
+      <p>Of all incidents: the shark initiated contact.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!--  S2: TIME TRENDS  -->
+<section id="s2">
+<div class="wrap">
+  <div class="sec-head rv">
+    <div class="stripe"></div>
+    <p class="sec-tag">Section 02 — Time</p>
+    <h2 class="sec-title">The rise that isn't<br><em>what it seems</em></h2>
+    <p class="sec-intro">
+      Incident counts have climbed sharply since 1980, but Australia's coastal population
+      tripled over the same period and water sports participation exploded.
+      The risk per person in the water has remained relatively stable.
+      There are simply far more people swimming.
+    </p>
+    <div class="sec-num">02</div>
+  </div>
+
+  <div class="card rv">
+    <p class="card-label">Annual Incidents 1960–2022 — Stacked by Outcome</p>
+    <div id="chart-stream" class="loading"></div>
+    <div class="legend">
+      <div class="leg"><div class="leg-sq" style="background:var(--red)"></div>Fatal</div>
+      <div class="leg"><div class="leg-sq" style="background:var(--amber)"></div>Injured</div>
+      <div class="leg"><div class="leg-sq" style="background:rgba(34,211,238,.55)"></div>Uninjured</div>
+    </div>
+    <p class="card-note">Source: Australian Shark Incident Database (ASID), 2023. All incidents with known year, 1960–2022.</p>
+  </div>
+
+  <div class="card rv" style="margin-top:22px;">
+    <p class="card-label">Incident Density Heatmap — Year × Month (1960–2022)</p>
+    <div id="chart-heatmap" class="loading"></div>
+    <p class="card-note"> Source: Australian Shark Incident Database (ASID), 2023. All incidents with known year, 1960–2022.</p>
+  </div>
+</div>
+</section>
+
+<!--  S3: STATES  -->
+<section id="s3">
+<div class="wrap">
+  <div class="sec-head rv">
+    <div class="stripe"></div>
+    <p class="sec-tag">Section 03 — States</p>
+    <h2 class="sec-title">A tale <br><em>through coastlines</em></h2>
+    <p class="sec-intro">
+      NSW leads in total incidents, a product of population density and surf culture.
+      But Western Australia tells a different story: fewer incidents overall, yet a fatality
+      rate nearly twice the national average. Remote surf breaks bring people face-to-face
+      with white sharks far from emergency services.
+    </p>
+    <div class="sec-num">03</div>
+  </div>
+
+  <div class="card rv">
+    <p class="card-label">Total vs Fatal Incidents by State — Dot Plot</p>
+    <div id="chart-dotplot" class="loading"></div>
+    <p class="card-note">Source: Australian Shark Incident Database (ASID), 2023. All known incidents within 1791-2022</p>
+  </div>
+
+  <div class="card rv" style="margin-top:22px;">
+    <p class="card-label">Fatal Incident Rate by State, with National Average</p>
+    <div id="chart-fatalrate" class="loading"></div>
+    <p class="card-note">Source: Australian Shark Incident Database (ASID), 2023. All known incidents within 1791-2022</p>
+  </div>
+</div>
+</section>
+
+<!--  S4: SPECIES & ACTIVITY  -->
+<section id="s4">
+<div class="wrap">
+  <div class="sec-head rv">
+    <div class="stripe"></div>
+    <p class="sec-tag">Section 04 — Species &amp; Activity</p>
+    <h2 class="sec-title">Three sharks, <br><em>one pattern</em></h2>
+    <p class="sec-intro">
+      White, tiger, and bull sharks account for the overwhelming majority of serious incidents.
+      But what you're doing in the water matters as much as which shark is nearby.
+      Surfers and swimmers dominate incident counts simply because they are the most common activities, 
+      and spend the most time in the water.
+    </p>
+    <div class="sec-num">04</div>
+  </div>
+
+  <div class="g2">
+    <div class="card rv">
+      <p class="card-label">Species — Total vs Fatal (Bubble Chart)</p>
+      <div id="chart-bubble" class="loading"></div>
+      <p class="card-note">Source: Australian Shark Incident Database (ASID), 2023. All known incidents within 1791-2022</p>
+    </div>
+    <div class="card rv d1">
+      <p class="card-label">Activity at Time of Incident — Radial Chart (Unprovoked Only)</p>
+      <div id="chart-radial" class="loading"></div>
+      <p class="card-note">Source: Australian Shark Incident Database (ASID), 2023. All unprovoked incidents within 1791-2022</p>
+    </div>
+  </div>
+
+  <div class="card rv" style="margin-top:22px;">
+    <p class="card-label">Top Species — Incidents Over Time (Stacked Area 1960–2022)</p>
+    <div id="chart-speciestime" class="loading"></div>
+    <div class="legend">
+      <div class="leg"><div class="leg-sq" style="background:var(--red)"></div>White shark</div>
+      <div class="leg"><div class="leg-sq" style="background:var(--amber)"></div>Bull shark</div>
+      <div class="leg"><div class="leg-sq" style="background:var(--gold)"></div>Tiger shark</div>
+      <div class="leg"><div class="leg-sq" style="background:var(--green)"></div>Wobbegong</div>
+      <div class="leg"><div class="leg-sq" style="background:var(--cyan)"></div>Whaler shark</div>
+      <div class="leg"><div class="leg-sq" style="background:rgba(255,255,255,.18)"></div>Other</div>
+    </div>
+    <p class="card-note">Source: Australian Shark Incident Database (ASID), 2023. All incidents with known year, 1960–2022.</p>
+  </div>
+
+  <div class="anno rv" style="margin-top:22px;">
+    <strong>Why do surfers dominate the count?</strong> A surfboard viewed from below can
+    resemble the silhouette of a seal, the white shark's preferred prey. Surfers also spend
+    hours in the mid-break zone near channel exits where predatory sharks patrol.
+    <em>This doesn't mean surfing is uniquely dangerous, it means surfers are the largest group in the distant waters.</em>
+  </div>
+</div>
+</section>
+
+<!--  S5: SEASONALITY  -->
+<section id="s5">
+<div class="wrap">
+  <div class="sec-head rv">
+    <div class="stripe"></div>
+    <p class="sec-tag">Section 05 — Seasonality &amp; Behaviour</p>
+    <h2 class="sec-title">Summer peaks and<br><em>the provocation divide</em></h2>
+    <p class="sec-intro">
+      January is the single most incident-prone month, correlating directly with peak
+      beach visitation across Australia. The provoked vs unprovoked split reveals a
+      critical insight: provoking a shark (through fishing, handling, or spearfishing)
+      dramatically changes the outcome profile.
+    </p>
+    <div class="sec-num">05</div>
+  </div>
+
+  <div class="g2">
+    <div class="card rv">
+      <p class="card-label">Incidents by Month — Radial Calendar</p>
+      <div id="chart-month" class="loading"></div>
+      <p class="card-note">Source: Australian Shark Incident Database (ASID), 2023. All known incidents within 1791-2022</p>
+    </div>
+    <div class="card rv d1">
+      <p class="card-label">Provoked vs Unprovoked — Outcome Breakdown</p>
+      <div id="chart-provoked" class="loading"></div>
+      <p class="card-note">Source: Australian Shark Incident Database (ASID), 2023. All known incidents within 1791-2022</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!--  S5b: DERIVED CHARTS  -->
+<section id="s5b">
+<div class="wrap">
+  <div class="sec-head rv">
+    <div class="stripe"></div>
+    <p class="sec-tag">Section 05b — Derived Patterns</p>
+    <h2 class="sec-title">Two angles the<br><em>basics don't show</em></h2>
+    <p class="sec-intro">
+      Combining fields across the dataset reveals patterns that single-variable
+      charts miss entirely: which sharks target which activities, and how
+      the overall pace of incidents has accelerated over two centuries.
+    </p>
+  </div>
+
+  <div class="card rv">
+    <p class="card-label">Activity × Species Heatmap — Who Encounters What</p>
+    <p style="font-size:13.5px;color:var(--sand2);line-height:1.75;margin-bottom:14px;">
+      Each cell shows how many times a particular shark species was involved in an incident
+      during a specific activity. White sharks dominate surfing encounters;
+      bull sharks are disproportionately involved in swimming and wading incidents in murky water,
+      wobbegongs almost exclusively bite divers who accidentally touch them.
+    </p>
+    <div id="chart-actspecies" class="loading"></div>
+    <p class="card-note">Source: Australian Shark Incident Database (ASID), 2023. All known incidents within 1791-2022</p>
+  </div>
+
+  <div class="card rv" style="margin-top:22px;">
+    <p class="card-label">Cumulative Shark Incidents 1791–2022 — Running Total</p>
+    <p style="font-size:13.5px;color:var(--sand2);line-height:1.75;margin-bottom:14px;">
+      The cumulative curve makes the acceleration story impossible to ignore.
+      It took over 150 years to reach 400 total incidents. The next 400 came
+      in just 30 years. The curve hasn't levelled off.
+    </p>
+    <div id="chart-cumulative" class="loading"></div>
+    <p class="card-note">Source: Australian Shark Incident Database (ASID), 2023. All known incidents within 1791-2022</p>
+  </div>
+</div>
+</section>
+
+<!--  S6: WATER QUALITY  -->
+<section id="s6">
+<div class="wrap">
+  <div class="sec-head rv">
+    <div class="stripe"></div>
+    <p class="sec-tag">Section 06 — Water Quality</p>
+    <h2 class="sec-title">How clean are<br><em> beaches really?</em></h2>
+    <p class="sec-intro">
+      The NSW Beachwatch program grades every monitored swim site annually based on
+      enterococci bacterial contamination. The 2025 dataset covers 249 sites across
+      all of NSW: from Pacific Ocean beaches to harbour bays, coastal lagoons,
+      and freshwater swimming holes. Where you swim matters enormously.
+    </p>
+    <div class="sec-num">06</div>
+  </div>
+
+  <div class="card rv">
+    <p class="card-label">NSW Swim Site Water Quality — 2025 Annual Grades</p>
+    <div id="map-wq" class="loading"></div>
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:var(--green)"></div>Very Good</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--mint)"></div>Good</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--gold)"></div>Fair</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--amber)"></div>Poor</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--red)"></div>Very Poor</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--grey)"></div>Follow Up</div>
+    </div>
+    <p class="card-note">Source: NSW Beachwatch Annual Grade dataset, DCCEEW Beachwatch Program, 2025. 249 swim sites. </p>
+  </div>
+
+  <div class="g2" style="margin-top:22px;">
+    <div class="card rv">
+      <p class="card-label">Grade Distribution — Each Square is One Swim Site (249 Total)</p>
+      <div id="chart-wq-grades" class="loading"></div>
+      <p class="card-note">Source: NSW Beachwatch Annual Grade dataset, DCCEEW Beachwatch Program, 2025. 249 swim sites. </p>
+    </div>
+    <div class="card rv d1">
+      <p class="card-label">Individual Site Grades by Region — Strip Plot</p>
+      <div id="chart-wq-strip" class="loading"></div>
+      <p class="card-note">Source: NSW Beachwatch Annual Grade dataset, DCCEEW Beachwatch Program, 2025. 249 swim sites. </p>
+    </div>
+  </div>
+
+  <div class="anno rv" style="margin-top:22px;">
+    <strong>What causes poor grades?</strong> Rainfall is the primary driver. Stormwater runoff
+    carries bacteria from animal waste, sewage overflows, and urban surfaces into swim sites.
+    Enclosed waters, harbours, estuaries, lagoons, etc. are most vulnerable because they don't
+    flush quickly like ocean beaches.
+    <em>After heavy rain: wait at least 1 day at ocean beaches and 3 days at enclosed water bodies before swimming.</em>
+  </div>
+</div>
+</section>
+
+<!--  S7: TAKEAWAYS  -->
+<section id="s7">
+<div class="wrap">
+  <div class="sec-head rv">
+    <div class="stripe"></div>
+    <p class="sec-tag">Section 07 — What the Data Tells Us</p>
+    <h2 class="sec-title">Swim smart,<br><em>not scared</em></h2>
+    <p class="sec-intro">
+      Two datasets, 232 years apart in origin, converge on the same message:
+      Australia's beaches are remarkably safe, but knowing the data helps
+      you make better decisions about where and when to swim.
+    </p>
+    <div class="sec-num">07</div>
+  </div>
+  <div class="g3 rv">
+    <div class="card">
+      <p class="card-label">🦈 Shark Risk</p>
+      <p style="font-size:13.5px;color:var(--sand2);line-height:1.85;">
+        Fewer than <strong style="color:var(--sand)">15 unprovoked incidents</strong> per year on average nationally. NSW has the most; WA the highest fatality rate. Avoid dawn and dusk. Never handle or provoke a shark.
+      </p>
+    </div>
+    <div class="card">
+      <p class="card-label">💧 Water Quality</p>
+      <p style="font-size:13.5px;color:var(--sand2);line-height:1.85;">
+        <strong style="color:var(--sand)">73% of NSW swim sites</strong> graded Good or Very Good in 2025. Avoid enclosed water bodies after heavy rain. Check <a href="https://beachwatch.nsw.gov.au" style="color:var(--cyan);">beachwatch.nsw.gov.au</a> before swimming — forecasts update twice daily.
+      </p>
+    </div>
+    <div class="card">
+      <p class="card-label">📍 Best Bets</p>
+      <p style="font-size:13.5px;color:var(--sand2);line-height:1.85;">
+        Ocean beaches consistently outperform enclosed water bodies on water quality. The Hunter Coast and Illawarra regions have the strongest track records. Avoid swimming near stormwater drains anywhere in NSW.
+      </p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!--  FOOTER  -->
+<footer>
+<div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <h3>Data Sources</h3>
+      <p>
+        <strong>Dataset 1 — Australian Shark Incident Database (ASID)</strong><br>
+        Taronga Conservation Society Australia &amp; Flinders University.<br>
+        <a href="https://github.com/cjabradshaw/AustralianSharkIncidentDatabase">https://github.com/cjabradshaw/AustralianSharkIncidentDatabase</a>.
+        1,196 incidents across Australia, 1791–2022.<br><br>
+        <strong>Dataset 2 — NSW Beachwatch Annual Grade 2025</strong><br>
+        Department of Climate Change, Energy, the Environment and Water (DCCEEW).<br>
+        Beachwatch Program, NSW Government. 249 swim sites, 2025.<br>
+        <a href="https://beachwatch.nsw.gov.au/waterMonitoring/waterQualityData">https://beachwatch.nsw.gov.au/waterMonitoring/waterQualityData</a>. 
+      </p>
+    </div>
+    <div>
+      <h3>About This Visualisation</h3>
+      <p>
+        Built with <a href="https://vega.github.io/vega-lite/">Vega-Lite 5.20</a> and vanilla HTML/CSS/JS.
+        All charts load data dynamically from <code>data/asid.csv</code> and
+        <code>data/beachwatch_2025.csv</code> <br><br>
+        Maps use Mercator projection. Geographic base layer via
+        Natural Earth / TopoJSON (vega-datasets).<br><br>
+        Created for Data Visualisation 2 Assignment, 2026.
+      </p>
+    </div>
+  </div>
+</div>
+</footer>
+
+<script>
+
+// CONFIG
+const ASID = "data/asid.csv";
+const BW   = "data/beachwatch_2025.csv";
+
+const AX = {
+  gridColor:"rgba(34,211,238,.07)", gridWidth:1,
+  domainColor:"rgba(34,211,238,.18)", tickColor:"rgba(34,211,238,.18)",
+  labelColor:"#6b849e", labelFontSize:11,
+  titleColor:"#f0e4c8", titleFontSize:12, titlePadding:10
+};
+const CFG = {
+  background:"transparent", font:"DM Sans",
+  axis:AX,
+  legend:{labelColor:"#6b849e",titleColor:"#f0e4c8",labelFontSize:11,titleFontSize:11},
+  view:{stroke:"transparent"},
+  title:{color:"#f0e4c8",fontSize:13}
+};
+const OPT = {actions:false, renderer:"canvas", tooltip:{theme:"dark"}};
+
+const INJURY_SCALE = {
+  domain:["fatal","injured","uninjured"],
+  range:["#e63946","#f4a261","#22d3ee"]
+};
+const GRADE_SCALE = {
+  domain:["Very Good","Good","Fair","Poor","Very Poor","Follow up"],
+  range: ["#2a9d8f","#78c8a8","#ffd166","#f4a261","#e63946","#a8a8b3"]
+};
+
+// Width 
+function W(id, fb=660){
+  const el = document.getElementById(id);
+  if(!el) return fb;
+  const card = el.closest(".card");
+  return Math.max(220, (card ? card.clientWidth - 52 : el.clientWidth - 8) || fb);
+}
+function clr(id){
+  const el=document.getElementById(id);
+  if(el) el.classList.remove("loading");
+}
+
+// Info boxes
+
+function loadKPIs(){
+  // ASID Info
+  fetch(ASID).then(r=>r.text()).then(txt=>{
+    const ls=txt.trim().split("\n");
+    const h=ls[0].split(",");
+    const iS=h.indexOf("State"), iI=h.indexOf("Victim_injury"), iP=h.indexOf("Provoked_unprovoked");
+    const rows=ls.slice(1).map(l=>{
+      const c=l.split(",");
+      return { state:c[iS]?.trim(), inj:c[iI]?.trim().toLowerCase(), prov:c[iP]?.trim().toLowerCase() };
+    });
+    const nsw   = rows.filter(r=>r.state==="NSW").length;
+    const wa    = rows.filter(r=>r.state==="WA");
+    const waFat = wa.filter(r=>r.inj==="fatal").length;
+    const waRate= wa.length ? Math.round(waFat/wa.length*100) : 0;
+    const unprov= rows.filter(r=>r.prov==="unprovoked").length;
+    const total = rows.length;
+    document.getElementById("kpi-nsw").textContent     = nsw;
+    document.getElementById("kpi-wa-rate").textContent = waRate+"%";
+    document.getElementById("kpi-unprov").textContent  = Math.round(unprov/total*100)+"%";
+  });
+  // Beachwatch Info
+  fetch(BW).then(r=>r.text()).then(txt=>{
+    const ls=txt.trim().split("\n");
+    const h=ls[0].split(",");
+    const iG=h.indexOf("Annual grade");
+    const rows=ls.slice(1).map(l=>l.split(",")[iG]?.trim());
+    const good=rows.filter(g=>g==="Very Good"||g==="Good").length;
+    const total=rows.filter(g=>g).length;
+    document.getElementById("kpi-good").textContent = Math.round(good/total*100)+"%";
+  });
+}
+
+// MAP 1 — Australia-wide shark incidents
+
+function drawMapAus(){
+  const w=W("map-aus"), h=Math.round(w*.70);
+  vegaEmbed("#map-aus", {
+    $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+    config:CFG, background:"transparent", width:w, height:h,
+    projection:{type:"mercator", center:[133.5,-29], scale:w*.95},
+    layer:[
+      { data:{url:"https://raw.githubusercontent.com/vega/vega-datasets/main/data/world-110m.json",
+              format:{type:"topojson",feature:"countries"}},
+        mark:{type:"geoshape", fill:"rgba(12,30,56,.88)", stroke:"rgba(34,211,238,.22)", strokeWidth:.6} },
+      { data:{url:ASID},
+        transform:[
+          {filter:"datum.Latitude != null && datum.Longitude != null && datum.Latitude != ''"},
+          {calculate:"lower(datum.Victim_injury)", as:"inj"}
+        ],
+        mark:{type:"circle", opacity:.65},
+        encoding:{
+          longitude:{field:"Longitude", type:"quantitative"},
+          latitude: {field:"Latitude",  type:"quantitative"},
+          size:{condition:{test:"datum.inj=='fatal'",value:65}, value:28},
+          color:{field:"inj", type:"nominal", scale:INJURY_SCALE, legend:{title:"Outcome", orient:"bottom-left"}},
+          tooltip:[
+            {field:"State",             title:"State"},
+            {field:"Incident_year",     title:"Year"},
+            {field:"Victim_injury",     title:"Outcome"},
+            {field:"Victim_activity",   title:"Activity"},
+            {field:"Shark_common_name", title:"Species"}
+          ]
+        }
+      }
+    ]
+  }, OPT).then(()=>clr("map-aus"));
+}
+
+
+// MAP 2 — Victoria zoom
+function drawMapVic(){
+  const w=W("map-vic"), h=Math.round(w*.90);
+  vegaEmbed("#map-vic", {
+    $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+    config:CFG, background:"transparent", width:w, height:h,
+    projection:{type:"mercator", center:[145,-37.8], scale:w*7},
+    layer:[
+      { data:{url:"https://raw.githubusercontent.com/vega/vega-datasets/main/data/world-110m.json",
+              format:{type:"topojson",feature:"countries"}},
+        mark:{type:"geoshape", fill:"rgba(12,30,56,.88)", stroke:"rgba(34,211,238,.25)", strokeWidth:.7} },
+      { data:{url:ASID},
+        transform:[
+          {filter:"datum.State==='VIC' && datum.Latitude!=null && datum.Latitude!=''"},
+          {calculate:"lower(datum.Victim_injury)", as:"inj"}
+        ],
+        mark:{type:"circle", opacity:.82},
+        encoding:{
+          longitude:{field:"Longitude", type:"quantitative"},
+          latitude: {field:"Latitude",  type:"quantitative"},
+          size:{condition:{test:"datum.inj=='fatal'",value:140}, value:52},
+          color:{field:"inj", type:"nominal", scale:INJURY_SCALE, legend:{title:"Outcome", orient:"bottom-left"}},
+          tooltip:[
+            {field:"Incident_year",     title:"Year"},
+            {field:"Victim_injury",     title:"Outcome"},
+            {field:"Victim_activity",   title:"Activity"},
+            {field:"Shark_common_name", title:"Species"}
+          ]
+        }
+      }
+    ]
+  }, OPT).then(()=>clr("map-vic"));
+}
+
+
+// CHART — Stacked area (annual by outcome)
+function drawStream(){
+  const w=W("chart-stream");
+  vegaEmbed("#chart-stream", {
+    $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+    config:CFG, background:"transparent", width:w-140, height:240,
+    data:{url:ASID},
+    transform:[
+      {filter:"datum.Incident_year>=1960 && datum.Incident_year<=2022"},
+      {calculate:"lower(datum.Victim_injury)", as:"inj"},
+      {aggregate:[{op:"count",as:"n"}], groupby:["Incident_year","inj"]}
+    ],
+    mark:{type:"area", interpolate:"monotone", opacity:.85},
+    encoding:{
+      x:{field:"Incident_year", type:"quantitative", title:"Year", axis:{format:"d",tickCount:8}},
+      y:{field:"n", type:"quantitative", title:"Annual Incidents", stack:true},
+      color:{field:"inj", type:"nominal", scale:INJURY_SCALE, legend:{title:"Outcome"}},
+      order:{field:"inj", sort:["uninjured","injured","fatal"]},
+      tooltip:[
+        {field:"Incident_year", title:"Year"},
+        {field:"inj",           title:"Outcome"},
+        {field:"n",             title:"Count"}
+      ]
+    }
+  }, OPT).then(()=>clr("chart-stream"));
+}
+
+// CHART — Heatmap (year × month)
+function drawHeatmap(){
+  const w=W("chart-heatmap");
+  vegaEmbed("#chart-heatmap", {
+    $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+    config:CFG, background:"transparent", width:w-120, height:210,
+    data:{url:ASID},
+    transform:[
+      {filter:"datum.Incident_year>=1960 && datum.Incident_year<=2022 && datum.Incident_month!=null && datum.Incident_month!=''"},
+      {calculate:"['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][datum.Incident_month-1]", as:"mo"},
+      {aggregate:[{op:"count",as:"n"}], groupby:["Incident_year","mo","Incident_month"]}
+    ],
+    mark:{type:"rect"},
+    encoding:{
+      x:{field:"Incident_year", type:"ordinal", title:"Year",
+         axis:{labelAngle:-50, labelFontSize:9,
+               labelExpr:"datum.value % 5 === 0 ? datum.value : ''"}},
+      y:{field:"mo", type:"ordinal", sort:["Dec","Nov","Oct","Sep","Aug","Jul","Jun","May","Apr","Mar","Feb","Jan"], title:"Month"},
+      color:{field:"n", type:"quantitative", scale:{scheme:"orangered",domain:[0,6]}, legend:{title:"Incidents",orient:"right"}},
+      tooltip:[
+        {field:"Incident_year", title:"Year"},
+        {field:"mo",            title:"Month"},
+        {field:"n",             title:"Incidents"}
+      ]
+    }
+  }, OPT).then(()=>clr("chart-heatmap"));
+}
+// CHART — Dot plot (total vs fatal by state)
+function drawDotPlot(){
+  const w=W("chart-dotplot");
+  vegaEmbed("#chart-dotplot", {
+    $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+    config:CFG, background:"transparent", width:w-80, height:250,
+    data:{url:ASID},
+    transform:[{calculate:"lower(datum.Victim_injury)", as:"inj"}],
+    layer:[
+      // rule from 0 to total
+      { transform:[{aggregate:[{op:"count",as:"total"}], groupby:["State"]}],
+        mark:{type:"rule", color:"rgba(255,255,255,.1)", strokeWidth:2},
+        encoding:{
+          y:{field:"State", type:"ordinal", sort:"-x"},
+          x:{field:"total", type:"quantitative", title:""}, x2:{value:0}
+        }
+      },
+      // total dot
+      { transform:[{aggregate:[{op:"count",as:"total"}], groupby:["State"]}],
+        mark:{type:"point", filled:true, size:130, color:"rgba(34,211,238,.75)"},
+        encoding:{
+          y:{field:"State", type:"ordinal", sort:"-x", title:null},
+          x:{field:"total", type:"quantitative", title:"Incidents"},
+          tooltip:[{field:"State",title:"State"},{field:"total",title:"Total Incidents"}]
+        }
+      },
+      // fatal dot
+      { transform:[{filter:"datum.inj=='fatal'"},{aggregate:[{op:"count",as:"fatal"}], groupby:["State"]}],
+        mark:{type:"point", filled:true, size:80, color:"#e63946"},
+        encoding:{
+          y:{field:"State", type:"ordinal", sort:"-x"},
+          x:{field:"fatal", type:"quantitative"},
+          tooltip:[{field:"State",title:"State"},{field:"fatal",title:"Fatal Incidents"}]
+        }
+      }
+    ]
+  }, OPT).then(()=>clr("chart-dotplot"));
+}
+
+// CHART — Fatal rate by state with average rule
+function drawFatalRate(){
+  const w=W("chart-fatalrate");
+  vegaEmbed("#chart-fatalrate", {
+    $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+    config:CFG, background:"transparent", width:w-80, height:210,
+    data:{url:ASID},
+    transform:[
+      {calculate:"lower(datum.Victim_injury)", as:"inj"},
+      {aggregate:[{op:"count",as:"n"}], groupby:["State","inj"]},
+      {joinaggregate:[{op:"sum",field:"n",as:"st"}], groupby:["State"]},
+      {filter:"datum.inj=='fatal'"},
+      {calculate:"datum.n/datum.st", as:"rate"}
+    ],
+    layer:[
+      { mark:{type:"bar", cornerRadiusTopLeft:3, cornerRadiusTopRight:3},
+        encoding:{
+          x:{field:"State", type:"ordinal", sort:"-y", title:"State"},
+          y:{field:"rate", type:"quantitative", title:"Fatal Rate", axis:{format:".0%"}},
+          color:{condition:{test:"datum.rate>0.2", value:"#e63946"}, value:"rgba(244,162,97,.65)"},
+          tooltip:[
+            {field:"State", title:"State"},
+            {field:"rate",  title:"Fatal Rate", format:".1%"},
+            {field:"n",     title:"Fatal Incidents"}
+          ]
+        }
+      },
+      { transform:[{aggregate:[{op:"mean",field:"rate",as:"avg"}]}],
+        mark:{type:"rule", strokeDash:[4,4], color:"rgba(34,211,238,.65)", strokeWidth:1.5},
+        encoding:{y:{field:"avg", type:"quantitative"}}
+      }
+    ]
+  }, OPT).then(()=>clr("chart-fatalrate"));
+}
+
+// CHART — Bubble chart (species total vs fatal)
+function drawBubble(){
+  const w=W("chart-bubble");
+  vegaEmbed("#chart-bubble", {
+    $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+    config:CFG, background:"transparent", width:w-160, height:280,
+    data:{url:ASID},
+    transform:[
+      {calculate:"lower(datum.Victim_injury)",     as:"inj"},
+      {calculate:"lower(datum.Shark_common_name)", as:"sp"},
+      {filter:"datum.sp!='unknown' && datum.Shark_common_name!=''"},
+      {aggregate:[{op:"count",as:"n"}], groupby:["sp","inj"]},
+      {pivot:"inj", value:"n", groupby:["sp"]},
+      {calculate:"(datum.fatal||0)+(datum.injured||0)+(datum.uninjured||0)", as:"total"},
+      {filter:"datum.total>=5"}
+    ],
+    layer:[
+      {
+        mark:{type:"point", filled:true, opacity:.82},
+        encoding:{
+          x:{field:"total",  type:"quantitative", title:"Total Incidents", scale:{zero:true}},
+          y:{field:"fatal",  type:"quantitative", title:"Fatal Incidents",  scale:{zero:true}},
+          size:{field:"total", type:"quantitative", scale:{range:[60,1800]}, legend:null},
+          color:{field:"injured", type:"quantitative", scale:{scheme:"oranges"}, legend:{title:"Injured"}},
+          tooltip:[
+            {field:"sp",      title:"Species"},
+            {field:"total",   title:"Total"},
+            {field:"fatal",   title:"Fatal"},
+            {field:"injured", title:"Injured"}
+          ]
+        }
+      },
+      {
+        mark:{type:"text", dy:1, fontSize:10, fontWeight:400, color:"rgba(240,228,200,.75)"},
+        encoding:{
+          x:{field:"total", type:"quantitative"},
+          y:{field:"fatal", type:"quantitative"},
+          text:{field:"sp", type:"nominal"}
+        }
+      }
+    ]
+  }, OPT).then(()=>clr("chart-bubble"));
+}
+
+// CHART — Radial bar (activity, unprovoked)
+function drawRadial(){
+  const w=W("chart-radial");
+  vegaEmbed("#chart-radial", {
+    $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+    config:CFG, background:"transparent", width:w-160, height:325,
+    data:{url:ASID},
+    transform:[
+      {calculate:"lower(datum.Provoked_unprovoked)", as:"prov"},
+      {filter:"datum.prov=='unprovoked' && datum.Victim_activity!=null && datum.Victim_activity!=''"},
+      {aggregate:[{op:"count",as:"n"}], groupby:["Victim_activity"]},
+      {window:[{op:"rank",as:"rank"}], sort:[{field:"n",order:"descending"}]},
+      {filter:"datum.rank<=8"}
+    ],
+    layer:[{
+      mark:{type:"arc", innerRadius:38, stroke:"rgba(0,0,0,.3)", strokeWidth:.5},
+      encoding:{
+        theta:{field:"n", type:"quantitative", stack:true},
+        radius:{field:"n", type:"quantitative", scale:{type:"sqrt",zero:true,rangeMin:38}},
+        color:{field:"Victim_activity", type:"nominal", scale:{scheme:"tableau10"}, legend:{title:"Activity",orient:"right"}},
+        tooltip:[
+          {field:"Victim_activity", title:"Activity"},
+          {field:"n",               title:"Incidents"}
+        ]
+      }
+    }]
+  }, OPT).then(()=>clr("chart-radial"));
+}
+
+// CHART — Species over time (stacked area, top 5 + other)
+function drawSpeciesTime(){
+  const w=W("chart-speciestime");
+  const TOP5 = ["white shark","tiger shark","wobbegong","bull shark","whaler shark"];
+  vegaEmbed("#chart-speciestime", {
+    $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+    config:CFG, background:"transparent", width:w-160, height:260,
+    data:{url:ASID},
+    transform:[
+      {filter:"datum.Incident_year>=1960 && datum.Incident_year<=2022"},
+      {calculate:"lower(datum.Shark_common_name)", as:"sp"},
+      {calculate:"indexof("+JSON.stringify(TOP5)+",datum.sp)>=0 ? datum.sp : 'other'", as:"sp_grp"},
+      {aggregate:[{op:"count",as:"n"}], groupby:["Incident_year","sp_grp"]}
+    ],
+    mark:{type:"area", interpolate:"monotone", opacity:.82},
+    encoding:{
+      x:{field:"Incident_year", type:"quantitative", title:"Year", axis:{format:"d",tickCount:8}},
+      y:{field:"n", type:"quantitative", title:"Annual Incidents", stack:true},
+      color:{field:"sp_grp", type:"nominal",
+        scale:{
+          domain:["white shark","bull shark","tiger shark","wobbegong","whaler shark","other"],
+          range: ["#e63946",   "#f4a261",   "#ffd166",    "#2a9d8f",  "#22d3ee",     "rgba(255,255,255,.18)"]
+        },
+        legend:{title:"Species"}},
+      tooltip:[
+        {field:"Incident_year", title:"Year"},
+        {field:"sp_grp",        title:"Species"},
+        {field:"n",             title:"Count"}
+      ]
+    }
+  }, OPT).then(()=>clr("chart-speciestime"));
+}
+
+// CHART — Radial/polar bar (month)
+function drawMonth(){
+  const w=W("chart-month");
+  const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  vegaEmbed("#chart-month", {
+    $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+    config:CFG, background:"transparent", width:w-80, height:340,
+    data:{url:ASID},
+    transform:[
+      {filter:"datum.Incident_month!=null && datum.Incident_month!=''"},
+      {calculate:""+JSON.stringify(MONTHS)+"[datum.Incident_month-1]", as:"mo"},
+      {aggregate:[{op:"count",as:"n"}], groupby:["mo","Incident_month"]}
+    ],
+    layer:[
+      // Arc bars
+      {
+        mark:{type:"arc", innerRadius:44, stroke:"rgba(0,0,0,.25)", strokeWidth:.5},
+        encoding:{
+          theta:{field:"mo", type:"ordinal", sort:MONTHS},
+          radius:{field:"n", type:"quantitative",
+                  scale:{type:"sqrt", zero:true, rangeMin:44}},
+          color:{field:"n", type:"quantitative",
+                 scale:{scheme:"blues"},
+                 legend:{title:"Incidents", orient:"right"}},
+          tooltip:[
+            {field:"mo", title:"Month"},
+            {field:"n",  title:"Incidents"}
+          ]
+        }
+      },
+      // Month name labels around the outside
+      {
+        mark:{type:"text", radius:70, fontSize:11,
+              fontWeight:400, fill:"#0c1e38"},
+        encoding:{
+          theta:{field:"mo", type:"ordinal", sort:MONTHS},
+          text:{field:"mo", type:"nominal"}
+        }
+      }
+    ]
+  }, OPT).then(()=>clr("chart-month"));
+}
+
+// CHART — Provoked vs unprovoked (normalised stacked)
+function drawProvoked(){
+  const w=W("chart-provoked");
+  vegaEmbed("#chart-provoked", {
+    $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+    config:CFG, background:"transparent", width:w-160, height:300,
+    data:{url:ASID},
+    transform:[
+      {calculate:"lower(datum.Provoked_unprovoked)", as:"prov"},
+      {calculate:"lower(datum.Victim_injury)",       as:"inj"},
+      {filter:"datum.prov!=null && datum.prov!='' && datum.inj!=null && datum.inj!=''"},
+      {aggregate:[{op:"count",as:"n"}], groupby:["prov","inj"]}
+    ],
+    mark:{type:"bar", cornerRadiusEnd:3},
+    encoding:{
+      y:{field:"prov", type:"ordinal", title:null},
+      x:{field:"n", type:"quantitative", title:"Share of Incidents", stack:"normalize", axis:{format:".0%"}},
+      color:{field:"inj", type:"nominal", scale:INJURY_SCALE, legend:{title:"Outcome"}},
+      order:{field:"inj", sort:["uninjured","injured","fatal"]},
+      tooltip:[
+        {field:"prov", title:"Type"},
+        {field:"inj",  title:"Outcome"},
+        {field:"n",    title:"Count"}
+      ]
+    }
+  }, OPT).then(()=>clr("chart-provoked"));
+}
+
+// MAP 3 — NSW water quality
+function drawMapWQ(){
+  const w=W("map-wq"), h=Math.round(w*.78);
+  vegaEmbed("#map-wq", {
+    $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+    config:CFG, background:"transparent", width:w-160, height:h,
+    projection:{type:"mercator", center:[151,-33.8], scale:w*2.3},
+    layer:[
+      { data:{url:"https://raw.githubusercontent.com/vega/vega-datasets/main/data/world-110m.json",
+              format:{type:"topojson",feature:"countries"}},
+        mark:{type:"geoshape", fill:"rgba(12,30,56,.88)", stroke:"rgba(34,211,238,.2)", strokeWidth:.6} },
+      { data:{url:BW},
+        mark:{type:"circle", size:55, opacity:.88, stroke:"rgba(0,0,0,.2)", strokeWidth:.4},
+        encoding:{
+          longitude:{field:"Longitude", type:"quantitative"},
+          latitude: {field:"Latitude",  type:"quantitative"},
+          color:{field:"Annual grade", type:"ordinal", scale:GRADE_SCALE, legend:{title:"Grade",orient:"right"}},
+          tooltip:[
+            {field:"Swim site",    title:"Site"},
+            {field:"Region",       title:"Region"},
+            {field:"Council",      title:"Council"},
+            {field:"Annual grade", title:"Grade"}
+          ]
+        }
+      }
+    ]
+  }, OPT).then(()=>clr("map-wq"));
+}
+
+// CHART — Waffle chart (WQ grade distribution)
+function drawWQGrades(){
+  fetch(BW).then(r=>r.text()).then(txt=>{
+    const lines = txt.trim().split("\n");
+    const h     = lines[0].split(",");
+    const iG    = h.indexOf("Annual grade");
+    const iS    = h.indexOf("Swim site");
+
+    const GRADE_ORDER = {"Very Good":0,"Good":1,"Fair":2,"Poor":3,"Very Poor":4,"Follow up":5};
+    const sites = lines.slice(1)
+      .map(l=>{ const c=l.split(","); return {site:c[iS]?.trim(), grade:c[iG]?.trim()}; })
+      .filter(d=>d.grade)
+      .sort((a,b)=>(GRADE_ORDER[a.grade]??9)-(GRADE_ORDER[b.grade]??9));
+
+    const COLS = 25;
+    const data = sites.map((d,i)=>({
+      ...d,
+      col: i % COLS,
+      row: Math.floor(i / COLS)
+    }));
+
+    const w = W("chart-wq-grades");
+    const cellSize = Math.max(14, Math.floor((w-1) / COLS));
+
+
+    vegaEmbed("#chart-wq-grades", {
+      $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+      config:CFG, background:"transparent",
+      width:w-1, height:355,
+      data:{values:data},
+      mark:{type:"rect", width:cellSize-2, height:cellSize-2},
+      encoding:{
+        x:{field:"col", type:"ordinal", axis:null},
+        y:{field:"row", type:"ordinal", axis:null, sort:"descending"},
+        color:{field:"grade", type:"ordinal", scale:GRADE_SCALE,
+               legend:{title:"Grade", orient:"bottom", columns:3, labelFontSize:11}},
+        tooltip:[
+          {field:"site",  title:"Swim Site"},
+          {field:"grade", title:"Grade"}
+        ]
+      }
+    }, OPT).then(()=>clr("chart-wq-grades"));
+  });
+}
+
+// CHART — WQ strip plot by region
+function drawWQStrip(){
+  const w=W("chart-wq-strip");
+  vegaEmbed("#chart-wq-strip", {
+    $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+    config:CFG, background:"transparent", width:w-2, height:400,
+    data:{url:BW},
+    transform:[
+      {calculate:"{'Very Good':1,'Good':2,'Fair':3,'Poor':4,'Very Poor':5,'Follow up':6}[datum['Annual grade']]", as:"gn"}
+    ],
+    mark:{type:"point", filled:true, size:85, opacity:.82},
+    encoding:{
+      y:{field:"Region", type:"ordinal", sort:{field:"gn",op:"mean"}, title:null},
+      x:{field:"gn", type:"quantitative", title:null,
+         scale:{domain:[.5,6.5]},
+         axis:{values:[1,2,3,4,5,6], labelExpr:"['','Very Good','Good','Fair','Poor','Very Poor','Follow Up'][datum.value]", labelAngle:-25, labelFontSize:10}},
+      color:{field:"Annual grade", type:"ordinal", scale:GRADE_SCALE, legend:{title:"Grade"}},
+      tooltip:[
+        {field:"Swim site",    title:"Site"},
+        {field:"Region",       title:"Region"},
+        {field:"Council",      title:"Council"},
+        {field:"Annual grade", title:"Grade"}
+      ]
+    }
+  }, OPT).then(()=>clr("chart-wq-strip"));
+}
+
+// CHART — Activity × Species heatmap (derived cross-field)
+function drawActSpecies(){
+  const w=W("chart-actspecies");
+  const TOP_SP  = ["white shark","tiger shark","bull shark","wobbegong","whaler shark","bronze whaler shark"];
+  const TOP_ACT = ["Surfing/Boarding","Swimming","Diving/Snorkelling","Spearfishing","Fishing","Kayaking/Paddling","Wading"];
+  vegaEmbed("#chart-actspecies", {
+    $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+    config:CFG, background:"transparent", width:w-160, height:280,
+    data:{url:ASID},
+    transform:[
+      // Normalise activity case
+      {calculate:"datum.Victim_activity=='swimming'?'Swimming':datum.Victim_activity=='fishing'?'Fishing':datum.Victim_activity", as:"act_norm"},
+      {calculate:"lower(datum.Shark_common_name)", as:"sp"},
+      {filter:"indexof("+JSON.stringify(TOP_SP)+",datum.sp)>=0 && indexof("+JSON.stringify(TOP_ACT)+",datum.act_norm)>=0"},
+      {aggregate:[{op:"count",as:"n"}], groupby:["sp","act_norm"]}
+    ],
+    mark:{type:"rect"},
+    encoding:{
+      x:{field:"act_norm", type:"ordinal", title:"Victim Activity",
+         sort:TOP_ACT, axis:{labelAngle:-30, labelFontSize:11}},
+      y:{field:"sp", type:"ordinal", title:null,
+         sort:TOP_SP},
+      color:{field:"n", type:"quantitative",
+             scale:{scheme:"orangered", zero:true},
+             legend:{title:"Incidents"}},
+      tooltip:[
+        {field:"sp",       title:"Species"},
+        {field:"act_norm", title:"Activity"},
+        {field:"n",        title:"Incidents"}
+      ]
+    }
+  }, OPT).then(()=>clr("chart-actspecies"));
+}
+
+// CHART — Cumulative incident curve (derived running total)
+function drawCumulative(){
+  fetch(ASID).then(r=>r.text()).then(txt=>{
+    const lines = txt.trim().split("\n");
+    const h     = lines[0].split(",");
+    const iY    = h.indexOf("Incident_year");
+
+    const yearMap = {};
+    lines.slice(1).forEach(l=>{
+      const y = parseInt(l.split(",")[iY]);
+      if(!isNaN(y)) yearMap[y] = (yearMap[y]||0)+1;
+    });
+
+    let cum = 0;
+    Object.keys(yearMap).filter(y=>parseInt(y)<1900)
+      .forEach(y=>{ cum += yearMap[y]; });
+
+    const data = [];
+    for(let y=1900; y<=2022; y++){
+      cum += (yearMap[y]||0);
+      data.push({year:y, cumulative:cum, annual:yearMap[y]||0});
+    }
+
+    const w = W("chart-cumulative");
+    vegaEmbed("#chart-cumulative", {
+      $schema:"https://vega.github.io/schema/vega-lite/v5.json",
+      config:CFG, background:"transparent", width:w-80, height:280,
+      data:{values:data},
+      layer:[
+        { mark:{type:"area", color:"rgba(34,211,238,.15)", interpolate:"monotone"},
+          encoding:{
+            x:{field:"year", type:"quantitative", title:"Year", axis:{format:"d",tickCount:8}},
+            y:{field:"cumulative", type:"quantitative", title:"Cumulative Incidents"}
+          }
+        },
+        { mark:{type:"line", color:"#22d3ee", strokeWidth:2.5, interpolate:"monotone"},
+          encoding:{
+            x:{field:"year", type:"quantitative"},
+            y:{field:"cumulative", type:"quantitative"}
+          }
+        },
+        { data:{values:[
+            {year:1950, label:"400th incident"},
+            {year:1983, label:"800th incident"}
+          ]},
+          mark:{type:"rule", strokeDash:[4,4], color:"rgba(244,162,97,.5)", strokeWidth:1},
+          encoding:{x:{field:"year", type:"quantitative"}}
+        },
+        { data:{values:[
+            {year:1950, cumulative:400, label:"400th incident"},
+            {year:1983, cumulative:800, label:"800th incident"}
+          ]},
+          mark:{type:"text", align:"left", dx:4, dy:-8, color:"rgba(244,162,97,.85)", fontSize:10},
+          encoding:{
+            x:{field:"year", type:"quantitative"},
+            y:{field:"cumulative", type:"quantitative"},
+            text:{field:"label", type:"nominal"}
+          }
+        },
+        { mark:{type:"circle", opacity:0, size:200},
+          encoding:{
+            x:{field:"year", type:"quantitative"},
+            y:{field:"cumulative", type:"quantitative"},
+            tooltip:[
+              {field:"year",       title:"Year"},
+              {field:"cumulative", title:"Cumulative Total"},
+              {field:"annual",     title:"That Year"}
+            ]
+          }
+        }
+      ]
+    }, OPT).then(()=>clr("chart-cumulative"));
+  });
+}
+
+// SCROLL REVEAL
+function initReveal(){
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add("in"); });
+  }, {threshold:.07});
+  document.querySelectorAll(".rv").forEach(el=>obs.observe(el));
+}
+
+window.addEventListener("DOMContentLoaded", ()=>{
+  initReveal();
+  loadKPIs();
+  const tasks = [
+    drawMapAus, drawMapVic,
+    drawStream, drawHeatmap,
+    drawDotPlot, drawFatalRate,
+    drawBubble, drawRadial, drawSpeciesTime,
+    drawMonth, drawProvoked,
+    drawActSpecies, drawCumulative,
+    drawMapWQ, drawWQGrades, drawWQStrip
+  ];
+  tasks.forEach((fn, i) => setTimeout(fn, 100 + i*50));
+});
+</script>
+</body>
+</html>
